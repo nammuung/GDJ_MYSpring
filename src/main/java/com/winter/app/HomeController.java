@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.winter.app.ioc.Robot;
+
 import com.winter.app.regions.RegionDAO;
 
 /**
@@ -27,12 +27,6 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	
-// robot 객체를 만들어서 사용해주셈
-	@Autowired 
-	private Robot robot;
-	@Autowired
-	private RegionDAO regionDAO;
-	
 	
 	//annotation : 설명+기능
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -45,8 +39,7 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 		
 		model.addAttribute("serverTime", formattedDate );
-//		robot.getLeftArm().act();
-//		robot.getRightArm().act();
+
 		return "index";
 	}
 	
