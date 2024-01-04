@@ -7,9 +7,20 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.winter.app.util.DBConnector;
 
+@Repository
 public class RegionDAO {
+	
+	@Autowired
+	private SqlSession sqlSession;
+	private final String namespace="com.winter.app.regions.RegionDAO.";
+	// final -> 상수
+	// namespace => 어떤 mapper를 쓸꺼냐 제일 마지막에 . 찍어줘야함 
 	
 	//update
 	public int update(RegionDTO regionDTO) throws Exception {
@@ -50,57 +61,14 @@ public class RegionDAO {
 	
 	//detail
 	public RegionDTO getDetail(RegionDTO regionDTO)throws Exception{
-		Connection con = DBConnector.getConnector();
-		
-		String sql = "SELECT * FROM REGIONS WHERE REGION_ID=?";
-		
-		PreparedStatement st = con.prepareStatement(sql);
-		
-		st.setInt(1, regionDTO.getRegion_id());
-		
-		ResultSet rs = st.executeQuery();
-		
-		RegionDTO resultDTO=null;
-		
-		if(rs.next()) {
-			resultDTO = new RegionDTO();
-			resultDTO.setRegion_id(rs.getInt("REGION_ID"));
-			resultDTO.setRegion_name(rs.getString("REGION_NAME"));
-		}
-		
-		return resultDTO;
+		return  sqlSession.selectOne(namespace+"getDetail", regionDTO);
+		// .사용하는 메서드 detail은 select 사용함
+		// id값 하나만 조회하기 떄문에 selectOne를 사용함
 	}
-	
-	public List<RegionDTO> getList() throws Exception {
-	
-		//1. driver를 메모리에 로딩(객체 생성)
-		
-		Connection con =DBConnector.getConnector();
-		//3. Sql문 생성
-		String sql = "SELECT REGION_NAME, REGION_ID FROM REGIONS";
-			
-			//4. SQL문 미리 전송
-		PreparedStatement st = con.prepareStatement(sql);
-			
-			//5.
-			
-			//6. 최종 전송 및 결과 처리
-		ResultSet rs = st.executeQuery();
-		
-		List<RegionDTO> ar = new ArrayList<RegionDTO>();
-		
-		while (rs.next()) {
-				//rs = 1, Europe
-			RegionDTO regionDTO = new RegionDTO();
-			int n = rs.getInt("REGION_ID");
-			regionDTO.setRegion_id(n);
-			regionDTO.setRegion_name(rs.getString("REGION_NAME"));
-			
-			ar.add(regionDTO);
-		}
 
-		DBConnector.disConnect(rs, st, con);
-		return ar;
+	// 결과물이 여러개이기때문에 list사용
+	public List<RegionDTO> getList() throws Exception {
+		return sqlSession.selectList(namespace+"getList");
 	}
 
 }
