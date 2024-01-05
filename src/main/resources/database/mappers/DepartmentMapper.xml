@@ -10,13 +10,30 @@
 	<!-- <insert id=""></insert> <select id=""></select> <update id=""></update> 
 		<delete id=""></delete> -->
 		
-		<select id="getDetail" resultType="com.winter.app.departments.DepartmentDTO" parameterType="com.winter.app.departments.DepartmentDTO">
+		<select id="getDetail" resultType="DepartmentDTO" parameterType="DepartmentDTO">
 		SELECT * FROM DEPARTMENTS WHERE DEPARTMENT_ID=#{department_id}
 		</select>
 		
-		<select id="getList" resultType="com.winter.app.departments.DepartmentDTO">
+		<select id="getList" resultType="DepartmentDTO">
 		SELECT * FROM DEPARTMENTS
 		</select>
+		
+		<!-- 추가 -->
+		<insert id="add" parameterType="DepartmentDTO">
+		INSERT INTO departments
+		VALUES	(LOCATIONS_SEQ.nextval, #{department_name}, #{manager_id}, #{location_id})		
+		</insert>
+		
+		<!-- 업데이트 -->
+		<update id="update" parameterType="DepartmentDTO">
+		UPDATE departments SET department_name=#{department_name} WHERE department_ID=#{department_id}
+		</update>
+		
+		<!-- 삭제 -->
+		<delete id="delete" parameterType="DepartmentDTO">
+		DELETE FROM departments WHERE department_ID=#{department_id}
+		</delete>
+		
 		
 		
 </mapper>

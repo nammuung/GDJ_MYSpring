@@ -27,5 +27,31 @@ public class DepartmentDAOTest extends MyTest{
 		assertNotEquals(0, ar.size());
 	}
 	
-
+	@Test
+	public void addTest() throws Exception{
+		DepartmentDTO departmentDTO = new DepartmentDTO();
+		departmentDTO.setDepartment_name("gddfsdf");
+		departmentDTO.setManager_id(200);
+		departmentDTO.setLocation_id(1500);
+		int result = departmentDAO.add(departmentDTO);
+		
+		assertEquals(1, result);
+	}
+	
+	@Test
+	public void updateTest() throws Exception{
+		DepartmentDTO departmentDTO = new DepartmentDTO();
+		departmentDTO.setDepartment_id(280);
+		departmentDTO.setDepartment_name("dgdgdg");
+		assertNotNull(departmentDTO);
+	}
+	
+	public void deleteTest() throws Exception{
+		DepartmentDTO departmentDTO = new DepartmentDTO();
+		departmentDTO.setDepartment_id(284);
+		int result = departmentDAO.delete(departmentDTO);
+		assertNotEquals(1, result);
+	}
+	
+	
 }

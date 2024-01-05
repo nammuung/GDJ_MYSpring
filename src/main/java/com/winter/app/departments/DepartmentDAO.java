@@ -11,7 +11,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.winter.app.regions.RegionDTO;
+
 //import com.winter.app.employees.EmployeeDTO;
 import com.winter.app.util.DBConnector;
 
@@ -46,11 +46,22 @@ public class DepartmentDAO {
 		return sqlSession.selectOne(namespace+"getDetail", departmentDTO);
 	}
 	
-	
-	
-	
 	public List<DepartmentDTO> getList() throws Exception {
 		return sqlSession.selectList(namespace+"getList");
 	}
+	
+	public int delete(DepartmentDTO departmentDTO) throws Exception{
+		return sqlSession.insert(namespace+"delete", departmentDTO);	
+	}
+	public int update(DepartmentDTO departmentDTO) throws Exception{
+		return sqlSession.insert(namespace+"update", departmentDTO);	
+	}
+	public int add(DepartmentDTO departmentDTO)throws Exception{
+		
+		return sqlSession.insert(namespace+"add", departmentDTO);
+	}
+	
+	
+	
 
 }

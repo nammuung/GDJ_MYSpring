@@ -54,11 +54,17 @@
 		<c:if test="${not empty dto}">
 			<h3>${dto.region_id}</h3>
 			<div>${dto.region_name}</div>
-		</div>
+			<a href="">Update</a><br>
+			<button id="test">Test</button><br>
+			<button id="del">delete</button>
+			<form action="./delete" method="post">
+			<input type="hidden" name="region_id" value="${dto.region_id}">
+			</form>
 		</c:if>
 		<c:if test="${empty dto}">
 		<h3>없는 번호 입니다.</h3>
 		</c:if>
+		</div>
 	</section>
 
 	<script
@@ -73,6 +79,6 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
 		integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
 		crossorigin="anonymous"></script>
-
+	<script src="../resources/js/regionDetail.js"></script>
 </body>
 </html>

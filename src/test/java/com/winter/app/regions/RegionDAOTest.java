@@ -34,4 +34,32 @@ public class RegionDAOTest extends MyTest{
 		assertNotNull(regionDTO);
 	}
 	
+	@Test
+	public void addTest () throws Exception{
+		RegionDTO regionDTO = new RegionDTO();
+		regionDTO.setRegion_name("test");
+		int result = regionDAO.add(regionDTO);
+		
+		assertNotEquals(1, result);
+	}
+	
+	@Test
+	public void updateTest ()  throws Exception{
+		RegionDTO regionDTO = new RegionDTO();
+		regionDTO.setRegion_name("gsd");
+		regionDTO.setRegion_id(221);
+		int result = regionDAO.update(regionDTO);
+		assertNotEquals(1, result);
+	}
+	
+	@Test
+	public void deleteTest () throws Exception{
+		RegionDTO regionDTO = new RegionDTO();
+		regionDTO.setRegion_id(223);
+		int result = regionDAO.delete(regionDTO);
+		assertNotNull(result);
+	}
+	
+	
+	
 }
