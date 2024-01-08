@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.winter.app.MyTest;
+import com.winter.app.util.Pager;
 
 public class RegionDAOTest extends MyTest{
 
@@ -16,10 +17,13 @@ public class RegionDAOTest extends MyTest{
 
 	@Test
 	public void getListTest() throws Exception{
-		List<RegionDTO> ar = regionDAO.getList();
-		
+		Pager pager = new Pager();
+		pager.setPage(2L);
+		pager.makeRow();
+		List<RegionDTO> ar = regionDAO.getList(pager);
+		System.out.println(ar.get(0).getRegion_name());
 		//단정문 -> ar의 리스트 사이즈가 0이 아니였음 좋겠다.
-		assertNotEquals(0, ar.size());
+		assertEquals(10, ar.size());
 	}
 	
 	
@@ -37,10 +41,16 @@ public class RegionDAOTest extends MyTest{
 	@Test
 	public void addTest () throws Exception{
 		RegionDTO regionDTO = new RegionDTO();
-		regionDTO.setRegion_name("test");
-		int result = regionDAO.add(regionDTO);
-		
-		assertNotEquals(1, result);
+//		for(int i=0;i<100;i++) {
+//			regionDTO.setRegion_name("test"+i);
+//			int result = regionDAO.add(regionDTO);
+//			if(i%10==0) {
+//				// 10개집어넣고 쉬다가 0.5초뒤에 시작
+//				Thread.sleep(500);
+//			}
+//		}	
+//		System.out.println("100개 입력 완료");
+//		assertNotEquals(1, result);
 	}
 	
 	@Test

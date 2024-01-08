@@ -7,5 +7,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 <typeAliases>
 <typeAlias type="com.winter.app.regions.RegionDTO" alias="RegionDTO"/>
 <typeAlias type="com.winter.app.departments.DepartmentDTO" alias="DepartmentDTO"/>
+<typeAlias type="com.winter.app.util.Pager" alias="Pager"/>
 </typeAliases>
 </configuration>
