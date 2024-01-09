@@ -40,6 +40,10 @@ public class RegionDAO {
 	public int add(RegionDTO regionDTO)throws Exception{
 		return sqlSession.insert(namespace+"add", regionDTO);
 	}
+	//getTotal
+	public Long getTotal(Pager pager)throws Exception{
+		return sqlSession.selectOne(namespace+"getTotal", pager);
+	}
 	
 	//detail
 	public RegionDTO getDetail(RegionDTO regionDTO)throws Exception{

@@ -9,6 +9,49 @@
 <!-- namespace의 value 중복 X -->
 <!-- 해당 mapper를 사용할 DAO에 pull_pakgename 으로 작성 -->
 <mapper namespace="com.winter.app.regions.RegionDAO">
+
+<!-- 방법2 스위치문 otherwise -> default 기능 -->
+<sql id="search3">
+<!-- search는 title, CONTENTS, WRITER 컬럼이 존재한다는 가정하에 작업함 -->
+	where
+	<choose>
+		<when test="kind=='kind1'">
+			title like '%'||#{search}||'%'
+		</when>
+		<when test="kind=='kind2'">
+			contents like '%'||#{search}||'%'
+		</when>
+		<otherwise>
+			writer like '%'||#{search}||'%'		
+		</otherwise>
+	</choose>
+</sql>
+
+
+
+
+<sql id="search2">
+<!-- search는 title, CONTENTS, WRITER 컬럼이 존재한다는 가정하에 작업함 -->
+	<where>
+	<if test="kind=='kind1' or kind=='kind4'">
+	title like '%'||#{search}||'%'
+	</if>
+	
+	<if test="kind=='kind2'or kind=='kind4'">
+	OR contents like '%'||#{search}||'%'
+	</if>
+	
+	<if test="kind=='kind3'or kind=='kind4'">
+	OR writer like '%'||#{search}||'%'
+	</if>
+	</where>
+		
+</sql>
+
+<sql id="search">
+	where region_name like '%'||#{search}||'%'
+	
+</sql>
 	<!-- detail 쿼리문 -->
 	<!-- region_id ?값을 가져오기위해 parameterType 선언 -->
 	<!-- 어떤값으로 리턴보낼지 resultType -->
@@ -21,12 +64,19 @@
 
 	<!-- list -->
 	<select id="getList" resultType="RegionDTO" parameterType="Pager">
-		SELECT * FROM
-		(SELECT ROWNUM R, RG.* from
-		(SELECT * FROM regions ORDER BY region_id DESC) RG)
+		SELECT * FROM 
+		(
+			SELECT ROWNUM R, RG.* FROM  
+			(
+		SELECT * FROM REGIONS
+		<include refid="search"></include>
+		 ORDER BY region_id DESC
+		 ) RG
+		  )
 		WHERE R BETWEEN #{startRow} AND #{lastRow}
 
 	</select>
+
 
 
 	<!-- insert -->
@@ -47,6 +97,11 @@
 		DELETE FROM REGIONS WHERE REGION_ID=#{region_id}
 	</delete>
 
+	<!-- getTotal -->
+	<select id="getTotal" resultType="Long" parameterType="Pager">
+	SELECT COUNT(REGION_ID) FROM regions
+	<include refid="search"></include>
+	</select>
 
 
 

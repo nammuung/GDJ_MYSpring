@@ -29,6 +29,7 @@ public class RegionService {
 	public int add(RegionDTO regionDTO)throws Exception{
 		return regionDAO.add(regionDTO);
 	}
+
 	
 	//detail
 	public RegionDTO getDetail(RegionDTO regionDTO)throws Exception{
@@ -38,6 +39,10 @@ public class RegionService {
 	//list
 	public List<RegionDTO> getList(Pager pager)throws Exception{
 		pager.makeRow();
+		Long totalCount = regionDAO.getTotal(pager);
+		System.out.println(totalCount);
+		pager.makeNum(totalCount);
+		
 		List<RegionDTO> ar = this.regionDAO.getList(pager);
 		
 		return ar;
