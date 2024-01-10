@@ -53,6 +53,13 @@ public class RegionDAO {
 	public List<RegionDTO> getList(Pager pager) throws Exception {
 		return sqlSession.selectList(namespace+"getList", pager);
 	}
+
+	// 파일 insert
+	public int addFile(RegionFileDTO regionFileDTO) throws Exception{
+		return sqlSession.insert(namespace+"addFile", regionFileDTO);
+	}
+	
+	
 	
 //	public HashMap<String, Object> getDetail(RegionDTO regionDTO)throws Exception{
 //		return sqlSession.selectOne(namespace+"getDetail", regionDTO);

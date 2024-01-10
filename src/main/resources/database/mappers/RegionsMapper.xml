@@ -81,8 +81,13 @@
 
 	<!-- insert -->
 	<insert id="add" parameterType="RegionDTO">
+		<!-- selectKey addfile에서 region_id를 가져오기위해 먼저 등록-->
+		<selectKey keyProperty="region_id" order="BEFORE" resultType="Long">
+		<!-- DUAL -> 가상의 테이블 생성 -->
+		select EMPLOYEES_SEQ.nextval from DUAL
+		</selectKey>
 		INSERT INTO REGIONS
-		VALUES (EMPLOYEES_SEQ.nextval, #{region_name})
+		VALUES (#{region_id}, #{region_name})
 	</insert>
 
 	<!-- update -->
@@ -104,5 +109,9 @@
 	</select>
 
 
+	<insert id="addFile"  parameterType="RegionFileDTO">
+		INSERT INTO REGIONFILES
+		VALUES (FILE_SEQ.nextval, #{filename}, #{oriName}, #{region_id})
+	</insert> 
 
 </mapper>

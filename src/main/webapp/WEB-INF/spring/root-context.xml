@@ -3,4 +3,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 	
+	
+	<!-- file upload 관련 class object 생성 -->
+	<!-- 파일을 여러개의 조각들로 받았을때 합치는 역할 -->
+	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
+	
+	<!-- 세터를 호출하는 태그 property -->
+	<!-- 기본 인코딩 값을 UTF-8로 맞춰줌 ( 한글로 되어있으면 깨질수 있어서 )  -->
+	<property name="defaultEncoding" value="UTF-8"></property>
+	
+	<!--총 파일의 크기 (단위는 바이트임) 10MB 설정함-->
+	<property name="maxUploadSize" value="10485760"></property>
+	
+	<!-- 파일 하나의 크기 제한 (단위는 바이트임) 2MB 설정함-->
+	<property name="maxUploadSizePerFile" value="2097152"></property>
+	</bean>
 </beans>
