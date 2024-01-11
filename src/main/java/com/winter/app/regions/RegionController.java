@@ -61,9 +61,9 @@ public class RegionController {
 		return "commons/result";
 	}
 	
-//	MultipartFile photo는 add.jsp에서 from데이터 받아온거 매개변수 선언)
+	
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public String add(RegionDTO regionDTO, Model model, MultipartFile photo) throws Exception {
+	public String add(RegionDTO regionDTO, Model model, MultipartFile [] photo) throws Exception {
 		int result = regionService.add(regionDTO, photo);
 		
 		String msg="등록 실패";
@@ -107,9 +107,9 @@ public class RegionController {
 	public ModelAndView list(Pager pager) throws Exception {
 		ModelAndView mv = new ModelAndView();
 		
-		
+		System.out.println("TotalPage :"+pager.getTotalPage());
 		List<RegionDTO> ar = regionService.getList(pager);
-		
+		System.out.println("TotalPage :"+pager.getTotalPage());
 		mv.addObject("list", ar);
 		mv.addObject("pager", pager);
 		mv.setViewName("regions/list");

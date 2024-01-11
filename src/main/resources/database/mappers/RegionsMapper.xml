@@ -1,117 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<!-- mapper namespace 비워두면 에러남 -->
-<!-- crud 방식 -->
-<!-- namespace의 value 중복 X -->
-<!-- 해당 mapper를 사용할 DAO에 pull_pakgename 으로 작성 -->
+  <!-- mapper namespace는 비우면 에러 -->
+<!-- namespace의 값은 중복 X -->
+<!-- 해당 mapper를 사용할 DAO의 풀패키지명으로 작성 -->  
 <mapper namespace="com.winter.app.regions.RegionDAO">
-
-<!-- 방법2 스위치문 otherwise -> default 기능 -->
-<sql id="search3">
-<!-- search는 title, CONTENTS, WRITER 컬럼이 존재한다는 가정하에 작업함 -->
-	where
-	<choose>
-		<when test="kind=='kind1'">
-			title like '%'||#{search}||'%'
-		</when>
-		<when test="kind=='kind2'">
-			contents like '%'||#{search}||'%'
-		</when>
-		<otherwise>
-			writer like '%'||#{search}||'%'		
-		</otherwise>
-	</choose>
-</sql>
-
-
-
-
-<sql id="search2">
-<!-- search는 title, CONTENTS, WRITER 컬럼이 존재한다는 가정하에 작업함 -->
-	<where>
-	<if test="kind=='kind1' or kind=='kind4'">
-	title like '%'||#{search}||'%'
-	</if>
 	
-	<if test="kind=='kind2'or kind=='kind4'">
-	OR contents like '%'||#{search}||'%'
-	</if>
-	
-	<if test="kind=='kind3'or kind=='kind4'">
-	OR writer like '%'||#{search}||'%'
-	</if>
-	</where>
+	<sql id="search3">
+		<!-- TITLE, CONTENTS, WRITER -->
+		WHERE
+		<choose>
+			<when test="kind=='kind1'">
+				TITLE LIKE '%'||#{search}||'%'
+			</when>
+			
+			<when test="kind=='kind2'">
+				CONTENTS LIKE '%'||#{search}||'%'
+			</when>
+			<otherwise>
+				WRITER LIKE '%'||#{search}||'%'
+			</otherwise>
 		
-</sql>
-
-<sql id="search">
-	where region_name like '%'||#{search}||'%'
+		</choose>	
+	</sql>
 	
-</sql>
-	<!-- detail 쿼리문 -->
-	<!-- region_id ?값을 가져오기위해 parameterType 선언 -->
-	<!-- 어떤값으로 리턴보낼지 resultType -->
-	<!-- ID는 DAO의 메서드명 -->
-	<select id="getDetail"
-		resultType="com.winter.app.regions.RegionDTO"
-		parameterType="com.winter.app.regions.RegionDTO">
-		select * from regions where region_id=#{region_id}
-	</select>
-
-	<!-- list -->
-	<select id="getList" resultType="RegionDTO" parameterType="Pager">
-		SELECT * FROM 
-		(
-			SELECT ROWNUM R, RG.* FROM  
-			(
-		SELECT * FROM REGIONS
-		<include refid="search"></include>
-		 ORDER BY region_id DESC
-		 ) RG
-		  )
-		WHERE R BETWEEN #{startRow} AND #{lastRow}
-
-	</select>
-
-
-
-	<!-- insert -->
+	<sql id="search2">
+		<bind name="p" value="'%'+_parameter.getSearch()+'%'"/>
+		<!-- TITLE, CONTENTS, WRITER -->
+		<where>
+		<if test="kind=='kind1' or kind=='kind4'">
+		TITLE LIKE #{p}
+		</if>
+		
+		<if test="kind =='kind2' or kind=='kind4'">
+		
+		OR CONTENTS LIKE '%'||#{search}||'%'
+		</if>
+		
+		<if test="kind=='kind3' or kind=='kind4'">
+		OR WRITER LIKE '%'||#{search}||'%'
+		</if>
+		</where>
+		
+		
+	</sql>
+	
+	<sql id="search">
+		
+		WHERE REGION_NAME LIKE '%'||#{search}||'%'
+	</sql>
+	
+	
+	
+	<!-- Delete -->
+	<delete id="delete" parameterType="RegionDTO">
+		DELETE REGIONS WHERE REGION_ID=#{region_id}
+		
+	</delete>
+	
+	<!-- update -->
+	<update id="update" parameterType="RegionDTO">
+		UPDATE REGIONS SET REGION_NAME=#{region_name}
+		WHERE REGION_ID=#{region_id}
+	</update>
+	
+	<insert id="addFile" parameterType="RegionFileDTO">
+		INSERT INTO REGIONFILES
+		VALUES(FILE_SEQ.NEXTVAL,#{region_id},#{fileName}, #{oriName})
+	</insert>
+	
+	<!-- Insert -->
 	<insert id="add" parameterType="RegionDTO">
-		<!-- selectKey addfile에서 region_id를 가져오기위해 먼저 등록-->
 		<selectKey keyProperty="region_id" order="BEFORE" resultType="Long">
-		<!-- DUAL -> 가상의 테이블 생성 -->
-		select EMPLOYEES_SEQ.nextval from DUAL
+			SELECT EMPLOYEES_SEQ.NEXTVAL FROM DUAL 
 		</selectKey>
 		INSERT INTO REGIONS
 		VALUES (#{region_id}, #{region_name})
 	</insert>
-
-	<!-- update -->
-	<update id="update" parameterType="RegionDTO">
-		UPDATE REGIONS SET REGION_NAME=#{region_name} WHERE REGION_ID=#{region_id}
-	</update>
+	
 
 
-	<!-- Delete -->
-	<delete id="delete" parameterType="RegionDTO">
-		<!--delete regions where regions_id=#{region_id} -->
-		DELETE FROM REGIONS WHERE REGION_ID=#{region_id}
-	</delete>
-
+	<!-- detail -->
+	<!-- id는 DAO의 메서드명 -->
+	<select id="getDetail" resultMap="getDetailResult" parameterType="RegionDTO">
+		SELECT *
+		FROM REGIONS R
+		     LEFT OUTER JOIN
+		     REGIONFILES RF
+		     USING (REGION_ID)
+		WHERE REGION_ID =#{region_id}
+	</select>
+	
+	<resultMap type="RegionDTO" id="getDetailResult">
+		<!-- PK -->
+		<id column="REGION_ID" property="region_id"/>
+		<!-- PK를 제외한 나머지 -->
+		<result column="REGION_NAME" property="region_name"/>
+		<!-- 1:1 -->
+		<!-- <association property="regionFileDTO" javaType="RegionFileDTO">
+			PK
+			<id column="FILENUM" property="fileNum"/>
+			<result column="FILENAME" property="fileName"/>
+			<result column="ORINAME" property="oriName"/>
+		</association> -->
+		<!-- 1:N -->
+		<collection property="regionFileDTOs" javaType="List" ofType="RegionFileDTO">
+			<id column="FILENUM" property="fileNum"/>
+			<result column="FILENAME" property="fileName"/>
+			<result column="ORINAME" property="oriName"/>
+		</collection>
+		
+	</resultMap>
+	
+	<!-- File List 1:N -->
+	<select id="getListFiles" resultType="RegionFileDTO" parameterType="RegionDTO">
+		SELECT * FROM REGIONFILES
+		WHERE REGION_ID=#{region_id}
+	</select>
+	
 	<!-- getTotal -->
 	<select id="getTotal" resultType="Long" parameterType="Pager">
-	SELECT COUNT(REGION_ID) FROM regions
-	<include refid="search"></include>
+		SELECT COUNT(REGION_ID) FROM REGIONS
+		<include refid="search"></include>
 	</select>
+	
+	<!-- list -->
+	<select id="getList" resultType="RegionDTO" parameterType="Pager">
+		SELECT * FROM
+		(
+			SELECT ROWNUM R, RG.* FROM
+				(
+					SELECT * FROM REGIONS
+					<include refid="search" /> 
+					ORDER BY REGION_ID DESC
+				) RG
+		)
+		WHERE R BETWEEN #{startRow} AND #{lastRow}
+		
+	</select>
+	
+<!-- <select id="getDetail" resultType="java.util.HashMap" parameterType="com.winter.app.regions.RegionDTO">
+		SELECT REGION_ID, REGION_NAME FROM REGIONS WHERE REGION_ID=#{region_id}
+	</select>
+	
+	list
+	<select id="getList" resultType="java.util.HashMap">
+		SELECT * FROM REGIONS
+	</select> -->
+	
+	
 
-
-	<insert id="addFile"  parameterType="RegionFileDTO">
-		INSERT INTO REGIONFILES
-		VALUES (FILE_SEQ.nextval, #{filename}, #{oriName}, #{region_id})
-	</insert> 
 
 </mapper>

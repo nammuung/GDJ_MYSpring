@@ -11,7 +11,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
 import com.winter.app.util.Pager;
 
 @Repository
@@ -36,13 +35,13 @@ public class RegionDAO {
 		
 	}
 	
+	public int addFile(RegionFileDTO regionFileDTO)throws Exception{
+		return sqlSession.insert(namespace+"addFile", regionFileDTO);
+	}
+	
 	//Insert
 	public int add(RegionDTO regionDTO)throws Exception{
 		return sqlSession.insert(namespace+"add", regionDTO);
-	}
-	//getTotal
-	public Long getTotal(Pager pager)throws Exception{
-		return sqlSession.selectOne(namespace+"getTotal", pager);
 	}
 	
 	//detail
@@ -50,16 +49,18 @@ public class RegionDAO {
 		return sqlSession.selectOne(namespace+"getDetail", regionDTO);
 	}
 	
+	public Long getTotal(Pager pager)throws Exception{
+		return sqlSession.selectOne(namespace+"getTotal", pager);
+	}
+	
 	public List<RegionDTO> getList(Pager pager) throws Exception {
 		return sqlSession.selectList(namespace+"getList", pager);
 	}
-
-	// 파일 insert
-	public int addFile(RegionFileDTO regionFileDTO) throws Exception{
-		return sqlSession.insert(namespace+"addFile", regionFileDTO);
+	
+	//File List 1:N
+	public List<RegionFileDTO> getListFiles(RegionDTO regionDTO)throws Exception{
+		return sqlSession.selectList(namespace+"getListFiles", regionDTO);
 	}
-	
-	
 	
 //	public HashMap<String, Object> getDetail(RegionDTO regionDTO)throws Exception{
 //		return sqlSession.selectOne(namespace+"getDetail", regionDTO);
